@@ -1,0 +1,26 @@
+<h1>Reports</h1>
+<br />
+<% if @can_edit_reports %>
+<%= link_to "Create New", new_admin_report_path %><br/><br/>
+<% form_tag import_admin_reports_path, :multipart => true do %>
+<label for="import_report">Import</label> <%= file_field_tag "import_report" %>
+<%= submit_tag "Upload" %><br/><br/>
+<% end %>
+<% end %>
+<% if @reports.blank? %>
+  No report Found!
+<% else %>
+<%= link_to "Generate Dynamic Report", generate_report_path %><br/><br/>
+<%= link_to "Generate Utilization Report", generate_utilization_report_admin_reports_path %><br/><br/>
+<% if @can_edit_reports %>
+<b>List of Reports</b><br/><br/>
+  <% @reports.each do |r|%>
+    <%= r.name %>
+    <%= link_to "Edit", edit_admin_report_path(r)%>
+    <%= link_to "Destroy", admin_report_path(r.id), :method => :delete, :confirm => "Are you sure want to delete '#{r.name}'?" %>
+	<%= link_to "Export", export_admin_report_path(r)%>
+	<br/>
+  <% end %>
+<% end %>
+<% end %>
+

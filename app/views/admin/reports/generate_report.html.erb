@@ -1,0 +1,75 @@
+<% if params[:return] == "run" %>
+	<%= link_to 'back', run_admin_reports_path %><br/>
+	<%= @report.name if @report.present? %>
+<% else %>
+	<%= link_to 'back', admin_reports_path %>
+
+	<% form_tag generate_report_path do %>
+	  <%= hidden_field_tag 'flow', 'choose_report' %>
+	  <%= label_tag "Choose report"%><br />
+	  <%= select('report', "id", @reports.collect{|r| [r.name,r.id]}.unshift(['--- Please select ---','']))%>
+	  <%= submit_tag "Go" %>
+	<% end %>
+<% end %>
+
+<% if @report.present? %>
+<% form_tag generate_report_path, {:id => 'report_generate'} do %>
+  <%= hidden_field_tag 'report[id]', @report.id %>
+  <%= hidden_field_tag 'flow', 'generate_report' %>
+  <%= hidden_field_tag 'return', params[:return] %>
+  <% if @report.present? %><br/>
+    <h3>Search Parameters :</h3>
+    <% if @report.list_of_parameters.present? %>
+      <% @report.list_of_parameters.each do |type,name|%>
+        <br/><%= name.humanize%><br/>
+        <%= 
+          case type
+            when "booking"
+              (select_tag name, options_for_select(Booking.all.map {|a| [a.name, a.id]}, params["#{name.to_sym}"].to_i))
+            when "room"
+              (select_tag name, option_groups_from_collection_for_select(Building.all, :rooms, :name, :id, :name, params["#{name.to_sym}"].to_i))
+            when "payment_method"          
+              (select_tag name, options_for_select(Payment.payment_methods, params["#{name.to_sym}"]))
+            when "building"
+              (select_tag name, options_for_select(Building.all.map {|b| [b.name,b.id]}, params["#{name.to_sym}"].to_i))
+            when "booking_category"
+              (select_tag name, options_for_select(BookingCategory.active.map {|book| [book.name,book.id]}, params["#{name.to_sym}"].to_i))
+            when "area"
+              (select_tag name, options_for_select(Area.all.map {|area| [area.name,area.id]}, params["#{name.to_sym}"].to_i))
+            when "customer"
+              (select_tag name, options_for_select((User.all.map {|customer| [customer.full_name, customer.id]}).sort {|a,b| a[0] <=> b[0]}, params["#{name.to_sym}"].to_i))
+            when "keyword"
+              (select_tag name, options_for_select(Tag.all.map {|keyword| [keyword.name,keyword.id]}, params["#{name.to_sym}"].to_i))
+            when "keywords"
+              render :partial => "keywords_selector", :locals => {:name => name}
+            when "supplier"
+              (select_tag name, options_for_select(Supplier.active.all.map {|supplier| [supplier.name,supplier.id]}, params["#{name.to_sym}"].to_i))
+            when "date", "start_date", "end_date" then
+              text_field_tag name,params["#{name.to_sym}"], :class => "datepicker"
+            when "text" then
+              text_field_tag name,params["#{name.to_sym}"]
+            else "#{type} - Unknown Type"
+          end
+        %><br />
+      <% end %>
+    <% else %>
+      No Parameters!<br />
+    <% end %>
+    <br />
+    <%= label_tag 'Format'%><br/>
+    <%= radio_button_tag 'download_format', 'XML', true %>XML<br />
+
+    <%= radio_button_tag 'download_format', 'CSV' %>CSV<br />
+
+	<% if @report.xslt_template.present? && !@report.xslt_template.data.blank? %>
+    <%= radio_button_tag 'download_format', 'XSLT' %>View/Print<br />
+	<% end %>
+	<% if @report.xslt_template.present? && !@report.xslt_template.xsl_fo.blank? %>
+    <%= radio_button_tag 'download_format', 'XSL-FO' %>PDF<br />
+	<% end %>
+    <%= submit_tag "Generate" %>
+  <% end %>
+<% end %>
+<% end %>
+<br /><br />
+

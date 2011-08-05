@@ -1,0 +1,133 @@
+<%= form.label :name %><br />
+<%= form.text_field :name %><br /><br />
+
+<%= form.label :report_on%><br />
+<%= form.select :report_on, Report::EntityName.map {|e| e}.unshift(['--Please Select--',''])%><br /><br />
+<%= observe_field "report_report_on", :url => {:action => :get_associated_tables}, :with => "'entity=' + value" %>
+
+<%= form.label "Choose XSLT template"%><br />
+<%= form.select :xslt_template_id, XsltTemplate.active.map {|t| [t.name,t.id]}, :include_blank => true %><br />
+
+<%= form.label "Choose CSV XSLT template"%><br />
+<%= form.select :csv_xslt_template_id, XsltTemplate.active.map {|t| [t.name,t.id]}, :include_blank => true %><br /><br />
+
+<%= form.label "List of database fields to select" %><br />
+<%= form.label "Entity"%><br />
+<div id='table_names'><%= render :partial => 'table_names', :table_names => @table_names %></div>
+<%= form.label "Field"%>
+<div id='column_names'><%= render :partial => 'column_names', :column_names => @column_list %></div>
+<a href="#" id='add-field'>Add field</a> <span id="field_error"></span><br/><br/>
+ 
+<% if @report.list_of_fields.blank?%>
+	<ul id='fields'></ul><br/>
+<% else %>
+	<ul id='fields'>
+	<% @report.list_of_fields.each do |table,column|%>
+		<li id='db_field_<%=table%>_<%=column%>' class='ui-state-default list-field list-field-set'>
+			<input type="hidden" name= "table_name[]" value="<%=table%>"/>
+			<input type="hidden" name= "column_name[]" value="<%=column%>"/>
+			<div class='list-col'><b> Entity : </b><%=table.humanize%></div>
+			<div class='list-col'><b> Field : </b><%=column%></div>
+			<div class='list-remove'><a href="#" id="remove_db_field_<%=table%>_<%=column%>">Remove</a></div>
+		</li>
+	<% end %>
+	</ul><br/>
+<% end %>
+
+<%= form.label "List of AchieveForm fields to select", "List of AchieveForm fields to select" %><br/>
+<%= form.label "Form"%><br />
+<%= select_tag "af_field_form", options_for_select(Report::AfSelectForms.map {|af| [af.humanize,af]}.unshift(['--Please Select--',''])) %><br />
+<%= form.label "Field"%>
+<div id='af_field_names'><%= render :partial => 'af_field_names', :af_field_names => @af_field_names %></div>
+<a href="#" id='add-af-field'>Add AchieveForms Field</a> <span id="af_field_error"></span><br/><br/>
+
+<% if @report.list_of_af_fields.blank?%>
+	<ul id='af-fields'></ul><br/>
+<% else %>
+	<ul id='af-fields'>
+	<% @report.list_of_af_fields.each do |form_name,data_name|%>
+		<li id='af_field_<%=form_name%>_<%=data_name%>' class='ui-state-default list-af-field list-field-set'>
+			<input type="hidden" name= "af_field_formname[]" value="<%=form_name%>"/>
+			<input type="hidden" name= "af_field_dataname[]" value="<%=data_name%>"/>
+			<div class='list-col'><b> Form : </b><%=form_name.humanize%></div>
+			<div class='list-col'><b> Field : </b><%=data_name%></div>
+			<div class='list-remove'><a href="#" id="remove_af_field_<%=form_name%>_<%=data_name%>">Remove</a></div>
+		</li>
+	<% end %>
+	</ul><br />
+<% end %>
+<%= observe_field "af_field_form", :url => {:action => :get_af_fields}, :with => "'field_name=' + value" %>
+  
+
+  
+<%= form.label "Query Condition" %><br />
+<%= form.text_area :sql, :rows => 10, :cols => 100 %><br />
+
+
+
+<%= form.label :list_of_parameters %><br />
+<%= form.label "Name"%>
+<%= text_field_tag "db_param_name" %>
+<%= form.label "Type"%>
+<%= select_tag "db_param_type", options_for_select(Report::ParamType.map {|r| [r.humanize, r]}.unshift(['--Please Select--',''])) %>
+<a href="#" id='add-param'>Add Param</a> <span id="error"></span><br/><br/>
+  <% if @report.list_of_parameters.blank?%>
+    <ul id='params'></ul><br/>
+  <% else %>
+    <ul id='params'>
+      <% @report.list_of_parameters.each do |type,name|%>
+        <li id='db_param_<%=name%>' class='ui-state-default list-param list-field-set'>
+          <input type="hidden" name= "param_name[]" value="<%=name%>"/>
+          <input type="hidden" name= "param_type[]" value="<%=type%>"/>
+          <div class='list-col'><b> Name : </b><%=name%></div>
+          <div class='list-col'><b> Type : </b><%=type.humanize%></div>
+          <div class='list-remove'><a href="#" id="remove_db_param_<%=name%>">Remove</a></div>
+        </li>
+      <% end %>
+    </ul><br/>
+  <% end %>
+
+<%= form.label :list_of_achieveforms_parameters %><br />
+<%= form.label "Form"%>
+<%= select_tag "af_param_form", options_for_select(Report::AfParamForms.map {|af| [af.humanize,af]}.unshift(['--Please Select--',''])) %><br />
+<%= form.label "Field"%>
+<div id='af_param_names'><%= render :partial => 'af_param_names', :af_params_names => @af_param_names %></div>
+<%= form.label "Condition"%>
+<%= select_tag "af_param_condition", options_for_select(Report::AFParamCondition.map {|r| [r.humanize, r]}.unshift(['--Please Select--',''])) %>
+<%= form.label "Value"%>
+<%= text_field_tag "af_param_value" %>
+
+<a href="#" id='add-af-param'>Add AchieveForms Param</a><span id="af_param_error"></span><br/><br/>
+  <% if @report.list_of_af_parameters.blank?%>
+    <ul id='af-params'></ul><br/>
+  <% else %>
+    <ul id='af-params'>
+      <% @report.list_of_af_parameters.each do |form_name,data_name,condition,value|%>
+        <li id='af_param_<%=form_name%>_<%=data_name%>' class='ui-state-default list-af-param list-field-set'>
+          <input type="hidden" name= "param_form[]" value="<%=form_name%>"/>
+          <input type="hidden" name= "param_field[]" value="<%=data_name%>"/>
+		  <input type="hidden" name= "param_condition[]" value="<%=condition%>"/>
+		  <input type="hidden" name= "param_value[]" value="<%=value%>"/>
+          <div class='list-col'><b> Form : </b><%=form_name.humanize%></div>
+          <div class='list-col'><b> Field : </b><%=data_name%></div>
+		  <div class='list-col'><b> Condition : </b><%=condition.humanize%></div>
+          <div class='list-col'><b> Value : </b><%=value%></div>
+          <div class='list-remove'><a href="#" id="remove_af_param_<%=form_name%>_<%=data_name%>">Remove</a></div>
+        </li>
+      <% end %>
+    </ul><br/>
+  <% end %>
+<%= observe_field "af_param_form", :url => {:action => :get_af_param_fields}, :with => "'field_name=' + value" %>
+    
+  
+  
+<%= form.label "Field to be updated after generation" %><br />
+<%= form.text_field "update_field_name" %><br />
+<%= form.label "Field to be updated with value" %><br />
+<%= form.text_field "update_field_value" %><br /><br />
+<br/>
+  
+<%= form.label "Permissions"%><br />
+<%= form.select :viewable_by, ['anyone','agent','administrator'],{}, {:multiple => true, :size => 5, :style => "width: 300px"} %>
+
+<%= form.submit "Submit" %><br/>

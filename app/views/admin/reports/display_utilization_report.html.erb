@@ -1,0 +1,24 @@
+<p>Overall Utilization Report
+	<br>
+	<br>
+	<br>
+<p>Total Provisional Slots = <%= @total_provisional_slots %></p>
+<p>Total Provision Hours = <%= @total_provisional_hours %></p>
+	<br>
+<p>Total Approved Slots = <%= @total_approved_slots %></p>
+<p>Total Approved Hours = <%= @total_approved_hours %></p>
+	<br>
+<p>Total Maintenance Slots = <%= @total_maintenance_slots %></p>
+<p>Total Maintenance Hours = <%= @total_maintenance_hours %></p>
+	<br>
+<p>Total Available Hours = <%= @total_available_hours %></p>
+	<br>
+<p>Total Hours (Provisional + Approved + Maintenance + Available) = <%= @total_hours%></p>
+	<br>
+	<br>
+<p>Utilization
+	<br>
+<p>Provisional = <%= "%2.f" % ((@total_provisional_hours / @total_hours) * 100) %>%
+<p>Approved = <%= "%2.f" % ((@total_approved_hours / @total_hours) * 100) %>%
+<p>Maintenance = <%= "%2.f" % ((@total_maintenance_hours / @total_hours) * 100) %>%
+<p>Available = <%= "%2.f" % (((@total_hours-(@total_provisional_hours + @total_approved_hours + @total_maintenance_hours)) / @total_hours ) * 100) %>%

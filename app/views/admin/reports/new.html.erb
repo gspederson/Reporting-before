@@ -1,0 +1,9 @@
+<% content_for(:js_includes) do %>
+  <%= javascript_include_tag 'report.js' %>
+<% end %>
+<%= link_to 'back', admin_reports_path %>
+
+<h1>Create New Report</h1>
+<% form_for @report,  :url => {:action => 'create'} do |form| %>
+  <%= render :partial => 'report_form', :locals => { :form => form }%>
+<% end %>

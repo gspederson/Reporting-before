@@ -1,0 +1,18 @@
+<%
+  per_row = 6
+  count   = 0
+%>
+<input type="checkbox" onclick="jQuery('input[name=keywords[]]').attr('checked', this.checked)"/> Select All
+<br/>
+<br/>
+
+<table>
+  <tr>
+  <% Tag.all.each do |keyword| %>
+    <% count = count + 1 %>
+    
+        <td><%= check_box_tag name.to_s + "[]", keyword.id %> <%= keyword.name[0,20] %></td>
+        <% if count % per_row == 0 %></tr><tr><% end %>
+  <% end  %>
+  </tr>
+</table>

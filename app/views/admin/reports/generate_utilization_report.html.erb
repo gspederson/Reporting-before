@@ -1,0 +1,22 @@
+<p><%= link_to 'back to Administrator Reports', (params[:return] == "run" ? run_admin_reports_path : admin_reports_path) %>
+<br>
+<br>
+<p>Generate Utilization Report Form
+<br>
+<br>
+<p>Choose the start and end date of the Utilization Report
+<br>	
+<br>
+	
+	<% form_tag({:action => :display_utilization_report}, {:method => :post}) do %>
+		<p>Start Date:<br>
+		<%= select_date (Date.today - 1.year) , :prefix => :start_date %></p>
+		<p>End Date:<br> 
+		<%= select_date Date.today, :prefix => :end_date %></p>
+		<br>
+		<br>
+		<%= submit_tag "Go" %>
+	<% end %>
+	
+
+

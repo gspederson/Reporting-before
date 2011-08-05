@@ -1,0 +1,23 @@
+<script type='text/javascript'>
+function print_confirmation(elementId) {
+ var printContent = document.getElementById(elementId);
+ var windowUrl = '';
+ var uniqueName = new Date();
+ var windowName = 'Print' + uniqueName.getTime();
+
+ var printWindow = window.open(windowUrl, windowName, 'left=50000,top=50000,width=0,height=0');
+
+ printWindow.document.write(printContent.innerHTML);
+ printWindow.document.close();
+ printWindow.focus();
+ printWindow.print();
+ printWindow.close();
+}
+</script>
+
+<%= link_to 'back', generate_report_path(:params => params.merge!("commit" => "Go")) %><br /><br />
+<a href="" style="margin:5px;" onclick="print_confirmation('xslt_template'); return false" target='_blank'>Print</a>
+
+<div id='xslt_template'>
+  <%= @output_xslt %>
+</div>

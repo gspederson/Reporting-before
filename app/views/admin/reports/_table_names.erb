@@ -1,0 +1,3 @@
+<%= select_tag "table", options_for_select(@table_names.map {|t| [t.singularize.humanize,t]}.unshift(['-- Please Select --','']))%>
+<%= observe_field "table", :url => {:action => :get_column_name}, :with => "'table_name=' + value" %>
+

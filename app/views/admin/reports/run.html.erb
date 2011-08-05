@@ -1,0 +1,6 @@
+<h1>Run Report</h1>
+<br />
+<%= link_to "Utilization Report", generate_utilization_report_admin_reports_path(:return => "run") %><br/>
+<% @reports.each do |r|%>
+	<%= link_to r.name, generate_report_path(:flow => "choose_report", "report[id]" => r.id, :return => "run") %><br/>
+<% end %>

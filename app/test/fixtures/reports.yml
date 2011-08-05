@@ -1,0 +1,29 @@
+# == Schema Information
+# Schema version: 20100913061020
+#
+# Table name: reports
+#
+#  id                    :integer(4)      not null, primary key
+#  name                  :string(255)
+#  sql                   :text
+#  list_of_parameters    :text
+#  created_at            :datetime
+#  updated_at            :datetime
+#  report_on             :string(255)
+#  list_of_af_parameters :text
+#  xslt_template_id      :integer(4)
+#  list_of_fields        :text
+#  viewable_by           :text
+#
+
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  sql: MyText
+  list_of_parameters: MyText
+
+two:
+  name: MyString
+  sql: MyText
+  list_of_parameters: MyText
